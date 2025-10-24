@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 
+type LeadEntry = {
+  email: string;
+  ts: number;
+};
+
 const DB = path.join(process.cwd(), 'leads.json');
 
 export async function POST(req: Request) {
@@ -11,10 +16,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'Invalid email' }, { status: 400 });
     }
 
-    let arr: any[] = [];
+    let arr: LeadEntry[] = [];
     try {
       const raw = await readFile(DB, 'utf8');
-      arr = JSON.parse(raw);
+      arr = JSON.parse(raw) as LeadEntry[];
     } catch {
       arr = [];
     }
@@ -27,4 +32,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'Server error' }, { status: 500 });
   }
 }
-
